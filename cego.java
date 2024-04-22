@@ -15,6 +15,7 @@ class cego{
     public void startRound(){
         //jedem Spieler wird der Punkte-Einsatz abgezogen und der Checkpot wird gesetzt
         checkpot = player.length * bet;
+        ui.changeCheckpot();
         for(int i = 0; i < player.length; i++){
             player[i].setPoints(-bet);
         }
@@ -44,6 +45,7 @@ class cego{
 
         checkpot = player.length * checkpot;
 
+        ui.changeCheckpot();
         ui.changePoints();
     }
 
