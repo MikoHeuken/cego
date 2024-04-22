@@ -135,7 +135,7 @@ public class cego_ui extends JFrame implements ActionListener {
     }
 
     public void changeCheckpot(){
-        checkpotLabel.setText("Checkpot: " + game.checkpot);
+        checkpotLabel.setText("Checkpot: " + game.getCheckpot());
     }
 
     public static void main(String[] args) {

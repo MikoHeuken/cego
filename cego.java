@@ -1,15 +1,27 @@
 class cego{
 
     //TODO private
-    cego_player[] player;
-    float checkpot;
-    cego_ui ui;
-    int bet;
+    private cego_player[] player;
+    private float checkpot;
+    private cego_ui ui;
+    private int bet;
 
     public cego(cego_player[] player, int bet, cego_ui ui) {
         this.player = player;
         this.ui = ui;
         this.bet = bet;
+    }
+
+    public int getBet() {
+      return bet;
+    }
+
+    public void setBet(int bet) {
+      this.bet = bet;
+    }
+
+    public float getCheckpot() {
+      return checkpot;
     }
 
     public void startRound(){
