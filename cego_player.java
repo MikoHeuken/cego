@@ -5,13 +5,25 @@ import java.util.List;
 
 public class cego_player {
     
-    String name;
-    float money;
-    int roundsPlayed;
+    private String name;
+    private float points;
+    //int roundsPlayed;
 
-    public cego_player(String name, float money){
+    public cego_player(String name, float points){
         this.name = name;
-        this.money = money;
+        this.points = points;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public float getPoints(){
+        return points;
+    }
+
+    public void setPoints(float valueChange){
+        points += valueChange;
     }
 
     public static void safePlayer(cego_player[] cegoPlayer){
@@ -19,7 +31,7 @@ public class cego_player {
         try (PrintWriter pWriter = new PrintWriter(new FileWriter(location, true));){
             //pWriter.println("Hallo Welt!");
             for(int i = 0; i < cegoPlayer.length; i++){
-                pWriter.print("\n" + cegoPlayer[i].name + "," + cegoPlayer[i].money);
+                pWriter.print("\n" + cegoPlayer[i].name + "," + cegoPlayer[i].points);
             }
         } catch (IOException ioe) {
             ioe.printStackTrace();

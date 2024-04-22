@@ -1,4 +1,4 @@
-Louis,100.0
-Miko,-150.0
-Marcel,50.0
+Louis,0.0
+Miko,0.0
+Marcel,0.0
 Yanick,0.0

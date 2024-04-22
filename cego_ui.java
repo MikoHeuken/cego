@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 
 //TODO überprüfen ob in der Runde 4 Stiche gemacht wurden
@@ -12,17 +13,20 @@ public class cego_ui extends JFrame implements ActionListener {
     private JComboBox<String>[] playerStiches;
     private JButton finishRoundButton;
     private int roundNumber = 1;
-    private int numberOfPlayers; // Beispielwert
+    private int numberOfPlayers;
     private cego_player[] player;
+    private cego game;
+    private int bet = 10; //TODO noch Hardcoded
 
     /**
      * Konstruktor für das Cego-Punkte-Fenster
-     * Es wird ein fenster erstellt, welches die aktuelle Runde anzeigt. Darunter befinden sich die Spieler mit ihren jeweiligen Punkten, sowie einer Möglichkeit anzugeben, wer wie viele Stiche gemacht hat.
+     * Es wird ein Fenster erstellt, welches die aktuelle Runde anzeigt. Darunter befinden sich die Spieler mit ihren jeweiligen Punkten, sowie einer Möglichkeit anzugeben, wer wie viele Stiche gemacht hat.
      * @param player Die spieler, welche in der Runde Teilnehmen.
      */
     public cego_ui(cego_player[] player) {
         this.player = player;
         numberOfPlayers = player.length;
+        game = new cego(player, bet, this);
 
         //Titel, Größe, Schließoptionen und Layout werden gesetzt
         setTitle("Score Tracker");
@@ -42,10 +46,10 @@ public class cego_ui extends JFrame implements ActionListener {
 
         //für jeden Spieler werden sein Name, sein Score und eine ComboBox zum Auswählen der gemachten Stiche hinzugefügt
         for(int i = 0; i < numberOfPlayers; i++){
-            playerNames[i] = new Label(player[i].name);
+            playerNames[i] = new Label(player[i].getName());
             playerPanel.add(playerNames[i]);
 
-            playerScores[i] = new JTextField("" + player[i].money);
+            playerScores[i] = new JTextField("" + player[i].getPoints());
             playerScores[i].setEditable(false); // Punktestand nicht editierbar
             playerPanel.add(playerScores[i]);
 
@@ -60,28 +64,64 @@ public class cego_ui extends JFrame implements ActionListener {
         add(finishRoundButton, BorderLayout.SOUTH);
 
         setVisible(true);
+
+        startGame();
+    }
+
+    /**
+     * Startet das Spiel
+     */
+    private void startGame(){
+        game.startRound();
     }
 
     @Override
     public void actionPerformed(ActionEvent e){
         if(e.getSource() == finishRoundButton){
+            ArrayList<cego_player> playersWithoutStitch = new ArrayList<cego_player>();
+
             //Runde abschließen
             roundNumber++;
             roundLabel.setText("Runde: " + roundNumber);
 
             //die Anzahl der Stiche pro Spieler werden ermittelt und die Punkte aktualisiert
             for(int i = 0; i < numberOfPlayers; i++){
-                String stich = (String) playerStiches[i].getSelectedItem();
+                String stitch = (String) playerStiches[i].getSelectedItem();
 
-                //TODO aktualisierung der Punkte
-                /**
-                if (!stich.equals("Aussetzen")) {
-                    int score = Integer.parseInt(playerScores[i].getText());
-                    score += Integer.parseInt(stich);
-                    playerScores[i].setText(Integer.toString(score));
+                if(stitch.equals("0")){
+                    playersWithoutStitch.add(player[i]);
+                }
+
+                if (!stitch.equals("Aussetzen")) {
+                    game.splitPot(Integer.parseInt(stitch), player[i]);
+                    //int score = Integer.parseInt(playerScores[i].getText());
+                    //score += Integer.parseInt(stich);
+                    //playerScores[i].setText(Integer.toString(score));
                 }
                 playerStiches[i].setSelectedItem("0"); // Dropdown-Menü zurücksetzen */
             }
+
+            changePoints();
+
+            //falls es Spieler mit keinem Stich gibt, wird die Bonusrunde gestertet. Dabei werden nur den Spielern ohne Stiche Punkte abgezogen
+            if(playersWithoutStitch.size() != 0){
+                cego_player[] player = new cego_player[playersWithoutStitch.size()];
+                for(int i = 0; i < player.length; i++){
+                    player[i] = playersWithoutStitch.get(i);
+                }
+                game.bonusRound(player);
+            }else{
+                game.startRound();
+            }
+        }
+    }
+
+    /**
+     * ändert die Punkte der Anzeige
+     */
+    public void changePoints(){
+        for(int i = 0; i < numberOfPlayers; i++){
+            playerScores[i].setText(Float.toString(player[i].getPoints()));
         }
     }
 
