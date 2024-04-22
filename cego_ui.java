@@ -87,6 +87,11 @@ public class cego_ui extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e){
         if(e.getSource() == finishRoundButton){
+            if (!isRoundValid()) {
+                JOptionPane.showMessageDialog(this, "Die Runde ist nicht gültig.", "Fehler", JOptionPane.ERROR_MESSAGE);
+                return; // Stoppe die Ausführung, wenn die Runde ungültig ist
+            }
+
             ArrayList<cego_player> playersWithoutStitch = new ArrayList<cego_player>();
 
             //Runde abschließen
@@ -134,8 +139,47 @@ public class cego_ui extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * ändert den Text des Checkpot-Labels
+     */
     public void changeCheckpot(){
         checkpotLabel.setText("Checkpot: " + game.getCheckpot());
+    }
+
+    /**
+     * prüft ob eine Runde abgeschlossen werden kann
+     * @return gibt zurück ob die runde gültig ist. Ungültig wird sie wenn weniger als 3 Spieler mitmachen oder nicht genau 4 Stiche erreicht wurden
+     */
+    public boolean isRoundValid(){
+        int nrOfStitches = 0;
+        int nrOfAussetzen = 0;
+
+        for(int i = 0; i < numberOfPlayers; i++){
+            String stitch = (String) playerStiches[i].getSelectedItem();
+            switch (stitch) {
+                case "Aussetzen":
+                    nrOfAussetzen++;
+                    break;
+                case "1":
+                    nrOfStitches += 1;
+                    break;
+                case "2":
+                    nrOfStitches += 2;
+                    break;
+                case "3":
+                    nrOfStitches += 3;
+                    break;
+                case "4":
+                    nrOfStitches += 4;
+                    break;
+            }
+        }
+
+        if(nrOfStitches != 4 || numberOfPlayers - nrOfAussetzen < 3){
+            return false;
+        }else{
+            return true;
+        }
     }
 
     public static void main(String[] args) {
