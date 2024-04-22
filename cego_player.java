@@ -27,7 +27,7 @@ public class cego_player {
     }
 
     public static cego_player[] getSavedPlayers(){
-        String fileName = "./stuff/cego/text.txt";
+        String fileName = "./text.txt";
         cego_player[] returnPlayer = null;
         List<String> lines = null;
 

@@ -10,9 +10,13 @@ public class cego_ui extends JFrame implements ActionListener {
     private JComboBox<String>[] playerStiches;
     private JButton finishRoundButton;
     private int roundNumber = 1;
-    private int numberOfPlayers = 4; // Beispielwert
+    private int numberOfPlayers; // Beispielwert
+    private cego_player[] player;
 
-    public cego_ui() {
+    public cego_ui(cego_player[] player) {
+        this.player = player;
+        numberOfPlayers = player.length;
+
         setTitle("Score Tracker");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,10 +35,10 @@ public class cego_ui extends JFrame implements ActionListener {
         playerStiches = new JComboBox[numberOfPlayers];
 
         for (int i = 0; i < numberOfPlayers; i++) {
-            playerNames[i] = new JTextField("Spieler " + (i + 1));
+            playerNames[i] = new JTextField(player[i].name);
             playerPanel.add(playerNames[i]);
 
-            playerScores[i] = new JTextField("0");
+            playerScores[i] = new JTextField("" + player[i].money);
             playerScores[i].setEditable(false); // Punktestand nicht editierbar
             playerPanel.add(playerScores[i]);
 
@@ -60,17 +64,20 @@ public class cego_ui extends JFrame implements ActionListener {
 
             for (int i = 0; i < numberOfPlayers; i++) {
                 String stich = (String) playerStiches[i].getSelectedItem();
+
+                //TODO aktualisierung der Punkte
+                /**
                 if (!stich.equals("Aussetzen")) {
                     int score = Integer.parseInt(playerScores[i].getText());
                     score += Integer.parseInt(stich);
                     playerScores[i].setText(Integer.toString(score));
                 }
-                playerStiches[i].setSelectedItem("0"); // Dropdown-Menü zurücksetzen
+                playerStiches[i].setSelectedItem("0"); // Dropdown-Menü zurücksetzen */
             }
         }
     }
 
     public static void main(String[] args) {
-        new cego_ui();
+        //new cego_ui();
     }
 }
