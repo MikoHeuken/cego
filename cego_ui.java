@@ -3,9 +3,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
+//TODO überprüfen ob in der Runde 4 Stiche gemacht wurden
 public class cego_ui extends JFrame implements ActionListener {
     private JLabel roundLabel;
-    private JTextField[] playerNames;
+    private Label[] playerNames;
     private JTextField[] playerScores;
     private JComboBox<String>[] playerStiches;
     private JButton finishRoundButton;
@@ -13,29 +15,34 @@ public class cego_ui extends JFrame implements ActionListener {
     private int numberOfPlayers; // Beispielwert
     private cego_player[] player;
 
+    /**
+     * Konstruktor für das Cego-Punkte-Fenster
+     * Es wird ein fenster erstellt, welches die aktuelle Runde anzeigt. Darunter befinden sich die Spieler mit ihren jeweiligen Punkten, sowie einer Möglichkeit anzugeben, wer wie viele Stiche gemacht hat.
+     * @param player Die spieler, welche in der Runde Teilnehmen.
+     */
     public cego_ui(cego_player[] player) {
         this.player = player;
         numberOfPlayers = player.length;
 
+        //Titel, Größe, Schließoptionen und Layout werden gesetzt
         setTitle("Score Tracker");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Layout
         setLayout(new BorderLayout());
 
-        // Rundenzähler
+        //Rundenzähler hinzufügen
         roundLabel = new JLabel("Runde: " + roundNumber);
         add(roundLabel, BorderLayout.NORTH);
 
-        // Spielerfelder
+        //die Fläche ür die Spielerfelder hinzufügen
         JPanel playerPanel = new JPanel(new GridLayout(numberOfPlayers, 3));
-        playerNames = new JTextField[numberOfPlayers];
+        playerNames = new Label[numberOfPlayers];
         playerScores = new JTextField[numberOfPlayers];
         playerStiches = new JComboBox[numberOfPlayers];
 
-        for (int i = 0; i < numberOfPlayers; i++) {
-            playerNames[i] = new JTextField(player[i].name);
+        //für jeden Spieler werden sein Name, sein Score und eine ComboBox zum Auswählen der gemachten Stiche hinzugefügt
+        for(int i = 0; i < numberOfPlayers; i++){
+            playerNames[i] = new Label(player[i].name);
             playerPanel.add(playerNames[i]);
 
             playerScores[i] = new JTextField("" + player[i].money);
@@ -47,7 +54,7 @@ public class cego_ui extends JFrame implements ActionListener {
         }
         add(playerPanel, BorderLayout.CENTER);
 
-        // Abschlussbutton
+        //Abschlussbutton
         finishRoundButton = new JButton("Runde abschließen");
         finishRoundButton.addActionListener(this);
         add(finishRoundButton, BorderLayout.SOUTH);
@@ -56,13 +63,14 @@ public class cego_ui extends JFrame implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == finishRoundButton) {
-            // Runde abschließen
+    public void actionPerformed(ActionEvent e){
+        if(e.getSource() == finishRoundButton){
+            //Runde abschließen
             roundNumber++;
             roundLabel.setText("Runde: " + roundNumber);
 
-            for (int i = 0; i < numberOfPlayers; i++) {
+            //die Anzahl der Stiche pro Spieler werden ermittelt und die Punkte aktualisiert
+            for(int i = 0; i < numberOfPlayers; i++){
                 String stich = (String) playerStiches[i].getSelectedItem();
 
                 //TODO aktualisierung der Punkte
@@ -78,6 +86,6 @@ public class cego_ui extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        //new cego_ui();
+        new cego_ui(null);
     }
 }
