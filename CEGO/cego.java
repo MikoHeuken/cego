@@ -1,12 +1,12 @@
 package CEGO;
 import java.io.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 class cego{
 
-    //TODO private
     private cego_player[] player;
-    private float checkpot;
+    private float checkpot = 0;
     private cego_ui ui;
     private int bet;
 
@@ -34,6 +34,7 @@ class cego{
         ui.changeCheckpot();
         for(int i = 0; i < player.length; i++){
             player[i].setPoints(-bet);
+            ui.setCache(i, player[i].getPoints());
         }
 
         //aktualisiert die Punktekonten
@@ -54,12 +55,16 @@ class cego{
      * startet eine runde, in der nur die Spieler Punkte einzahlen, welche in der vorherigen keine Stiche gemacht haben
      * @param player die Spieler, die letzte Runde keinen Stich gemacht haben
      */
-    public void bonusRound(cego_player[] player){
-        for(int i = 0; i < player.length; i++){
-            player[i].setPoints(-checkpot);
+    public void bonusRound(cego_player[] playerWithNoStitch){
+        for(int i = 0; i < playerWithNoStitch.length; i++){
+            playerWithNoStitch[i].setPoints(-checkpot);
         }
 
-        checkpot = player.length * checkpot;
+        for(int i = 0; i < player.length; i++){
+            ui.setCache(i, player[i].getPoints());
+        }
+
+        checkpot = playerWithNoStitch.length * checkpot;
 
         ui.changeCheckpot();
         ui.changePoints();
@@ -69,13 +74,18 @@ class cego{
      * speichert eine Runde in einer neuen Textdatei
      * @param playedRounds die Anzahl der gespielten Runden im Spiel
      */
-    public void safeRound(int playedRounds){
+    public void safeRound(int playedRounds, ArrayList<Float>[] cache){
         LocalDateTime now = LocalDateTime.now();
         String location = "./CEGO/savedRounds/" + now.toString().replace(":", ".") + ".txt";
+
         try(PrintWriter pWriter = new PrintWriter(new FileWriter(location, false));){
             pWriter.println(playedRounds);
             for(int i = 0; i < player.length; i++){
-                pWriter.println(player[i].getName() + "," + player[i].getPoints());
+                pWriter.print(player[i].getName() + ",");
+                for(int j = 0; j < cache[i].size(); j++){
+                    pWriter.print(cache[i].get(j) + ",");
+                }
+                pWriter.println(player[i].getPoints());
             }
         }catch (IOException ioe){
             ioe.printStackTrace();
