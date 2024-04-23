@@ -66,15 +66,42 @@ public class addPlayerUI extends JFrame implements ActionListener {
     }
 
     /**
-     * startet eine Runde nachdem alle Spieler eingegeben wurden
+     * fragt ab mit welchem Einsatz gespielt werden soll, danach startet eine Runde
      */
     private void startGame(){
-      CEGO.cego_player[] player = new cego_player[nameList.size()];
-      for(int i = 0; i < nameList.size(); i++){
-        player[i] = new cego_player(nameList.get(i), 0);
-      }
-      CEGO.cego_ui game = new cego_ui(player, 10);
-      dispose();
+      JFrame frame = new JFrame("Einsatz wählen");
+      frame.setSize(300, 100);
+      frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Schließt nur das Spielstart-Fenster, nicht das Hauptfenster
+      frame.setLayout(new FlowLayout());
+
+      JLabel label = new JLabel("Geben Sie den Einsatz ein:");
+      JTextField betField = new JTextField(10);
+      JButton confirmButton = new JButton("Bestätigen");
+
+      confirmButton.addActionListener(new ActionListener() {
+          /**
+           * bei Betätigen des Bestätigen Buttons, wird die Angabe zum Starten eines neuen Spieles genommen
+           */
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              String betString = betField.getText();
+              int bet = Integer.parseInt(betString); 
+              frame.dispose(); // Schließe das Einsatzauswahlfenster
+
+              CEGO.cego_player[] player = new cego_player[nameList.size()];
+              for(int i = 0; i < nameList.size(); i++){
+                player[i] = new cego_player(nameList.get(i), 0);
+              }
+              CEGO.cego_ui game = new cego_ui(player, bet);
+              dispose();
+          }
+      });
+
+      frame.add(label);
+      frame.add(betField);
+      frame.add(confirmButton);
+
+      frame.setVisible(true);
     }
 
     /**
