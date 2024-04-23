@@ -1,3 +1,6 @@
+import java.io.*;
+import java.time.LocalDateTime;
+
 class cego{
 
     //TODO private
@@ -59,6 +62,23 @@ class cego{
 
         ui.changeCheckpot();
         ui.changePoints();
+    }
+
+    /**
+     * speichert eine Runde in einer neuen Textdatei
+     * @param playedRounds die Anzahl der gespielten Runden im Spiel
+     */
+    public void safeRound(int playedRounds){
+        LocalDateTime now = LocalDateTime.now();
+        String location = "savedRounds/" + now.toString().replace(":", ".") + ".txt";
+        try(PrintWriter pWriter = new PrintWriter(new FileWriter(location, false));){
+            pWriter.println(playedRounds);
+            for(int i = 0; i < player.length; i++){
+                pWriter.println(player[i].getName() + "," + player[i].getPoints());
+            }
+        }catch (IOException ioe){
+            ioe.printStackTrace();
+        }
     }
 
 }

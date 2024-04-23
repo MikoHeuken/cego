@@ -5,7 +5,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 
-//TODO überprüfen ob in der Runde 4 Stiche gemacht wurden
 public class cego_ui extends JFrame implements ActionListener {
     private JLabel roundLabel;
     private JLabel checkpotLabel;
@@ -13,11 +12,12 @@ public class cego_ui extends JFrame implements ActionListener {
     private JTextField[] playerScores;
     private JComboBox<String>[] playerStiches;
     private JButton finishRoundButton;
+    private JButton finishGameButon;
     private int roundNumber;
     private int numberOfPlayers;
     private cego_player[] player;
     private cego game;
-    private int bet = 10; //TODO noch Hardcoded
+    private boolean isBonusRound;
 
     /**
      * Konstruktor für das Cego-Punkte-Fenster
@@ -25,15 +25,15 @@ public class cego_ui extends JFrame implements ActionListener {
      * @param player Die spieler, welche in der Runde Teilnehmen.
      */
     @SuppressWarnings("unchecked")
-    public cego_ui(cego_player[] player) {
-        this.player = player;
+    public cego_ui(cego_player[] player, int bet) {
+        this.player = player; 
         numberOfPlayers = player.length;
         game = new cego(player, bet, this);
         roundNumber = 1;
 
         //Titel, Größe, Schließoptionen und Layout werden gesetzt
         setTitle("Score Tracker");
-        setSize(400, 300);
+        setSize(600, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -67,20 +67,19 @@ public class cego_ui extends JFrame implements ActionListener {
         }
         add(playerPanel, BorderLayout.CENTER);
 
-        //Abschlussbutton
+        //Rundenendebutton und Spielende Button
+        JPanel buttonPanel = new JPanel(new GridLayout(1,2));
         finishRoundButton = new JButton("Runde abschließen");
+        finishGameButon = new JButton("Spiel abschließen und speichern");
+        buttonPanel.add(finishRoundButton);
+        buttonPanel.add(finishGameButon);
         finishRoundButton.addActionListener(this);
-        add(finishRoundButton, BorderLayout.SOUTH);
+        finishGameButon.addActionListener(this);
+        add(buttonPanel, BorderLayout.SOUTH);
 
         setVisible(true);
 
-        startGame();
-    }
-
-    /**
-     * Startet das Spiel
-     */
-    private void startGame(){
+        isBonusRound = false;
         game.startRound();
     }
 
@@ -89,10 +88,46 @@ public class cego_ui extends JFrame implements ActionListener {
         if(e.getSource() == finishRoundButton){
             if (!isRoundValid()) {
                 JOptionPane.showMessageDialog(this, "Die Runde ist nicht gültig.", "Fehler", JOptionPane.ERROR_MESSAGE);
-                return; // Stoppe die Ausführung, wenn die Runde ungültig ist
+            }else{
+                finishRound();
+            }
+        }
+        if(e.getSource() == finishGameButon){
+            if(!isRoundValid()){
+                JOptionPane.showMessageDialog(this, "Die Runde ist nicht gültig.", "Fehler", JOptionPane.ERROR_MESSAGE);
+            }else{
+                finishGame();
+            }
+        }
+    }
+
+    /**
+     * wird auferufen wenn der Spielabschlussbutton betätigt wird
+     */
+    public void finishGame(){
+        ArrayList<cego_player> playersWithoutStitch = new ArrayList<cego_player>();
+        for(int i = 0; i < numberOfPlayers; i++){
+            String stitch = (String) playerStiches[i].getSelectedItem();
+
+            if(stitch.equals("0")){
+                playersWithoutStitch.add(player[i]);
             }
 
-            ArrayList<cego_player> playersWithoutStitch = new ArrayList<cego_player>();
+            if (!stitch.equals("Aussetzen")) {
+                game.splitPot(Integer.parseInt(stitch), player[i]);
+            }
+            playerStiches[i].setSelectedItem("0"); // Dropdown-Menü zurücksetzen */
+        }
+
+        game.safeRound(roundNumber);
+        dispose();
+    }
+
+    /**
+     * wird aufgerufen wenn der Rundenabschlussbutton betätigt wird
+     */
+    public void finishRound(){
+        ArrayList<cego_player> playersWithoutStitch = new ArrayList<cego_player>();
 
             //Runde abschließen
             roundNumber++;
@@ -108,9 +143,6 @@ public class cego_ui extends JFrame implements ActionListener {
 
                 if (!stitch.equals("Aussetzen")) {
                     game.splitPot(Integer.parseInt(stitch), player[i]);
-                    //int score = Integer.parseInt(playerScores[i].getText());
-                    //score += Integer.parseInt(stich);
-                    //playerScores[i].setText(Integer.toString(score));
                 }
                 playerStiches[i].setSelectedItem("0"); // Dropdown-Menü zurücksetzen */
             }
@@ -123,11 +155,12 @@ public class cego_ui extends JFrame implements ActionListener {
                 for(int i = 0; i < player.length; i++){
                     player[i] = playersWithoutStitch.get(i);
                 }
+                isBonusRound = true;
                 game.bonusRound(player);
             }else{
+                isBonusRound = false;
                 game.startRound();
             }
-        }
     }
 
     /**
@@ -183,6 +216,6 @@ public class cego_ui extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new cego_ui(null);
+        new cego_ui(null, 10);
     }
 }
