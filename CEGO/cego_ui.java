@@ -32,7 +32,7 @@ public class cego_ui extends JFrame implements ActionListener {
         numberOfPlayers = player.length;
         game = new cego(player, bet, this);
         roundNumber = 1;
-        cache = new ArrayList[numberOfPlayers];
+        cache = new ArrayList[numberOfPlayers + 1];
 
         for(int i = 0; i < cache.length; i++){
             cache[i] = new ArrayList<>();
@@ -99,6 +99,10 @@ public class cego_ui extends JFrame implements ActionListener {
      */
     public void setCache(int i, float n){
         cache[i].add(n);
+    }
+
+    public int getCacheLength(){
+        return cache.length;
     }
 
     /**

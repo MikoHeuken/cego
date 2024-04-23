@@ -31,6 +31,7 @@ class cego{
     public void startRound(){
         //jedem Spieler wird der Punkte-Einsatz abgezogen und der Checkpot wird gesetzt
         checkpot = player.length * bet;
+        ui.setCache(ui.getCacheLength() - 1, checkpot);
         ui.changeCheckpot();
         for(int i = 0; i < player.length; i++){
             player[i].setPoints(-bet);
@@ -65,6 +66,7 @@ class cego{
         }
 
         checkpot = playerWithNoStitch.length * checkpot;
+        ui.setCache(ui.getCacheLength() - 1, checkpot);
 
         ui.changeCheckpot();
         ui.changePoints();
@@ -86,6 +88,10 @@ class cego{
                     pWriter.print(cache[i].get(j) + ",");
                 }
                 pWriter.println(player[i].getPoints());
+            }
+            pWriter.print("Checkpot");
+            for(int i = 0; i < cache[ui.getCacheLength() - 1].size(); i++){
+                pWriter.print("," + cache[ui.getCacheLength() - 1].get(i));
             }
         }catch (IOException ioe){
             ioe.printStackTrace();
