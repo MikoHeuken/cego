@@ -28,6 +28,10 @@ class cego{
       return checkpot;
     }
 
+    public void setCheckpot(float checkpot) {
+      this.checkpot = checkpot;
+    }
+
     public void startRound(){
         //jedem Spieler wird der Punkte-Einsatz abgezogen und der Checkpot wird gesetzt
         checkpot = player.length * bet;

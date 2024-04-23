@@ -126,7 +126,7 @@ public class cego_ui extends JFrame implements ActionListener {
                 finishGame();
             }
         }
-        //überprüft ob zurück gegangen werden kann, wenn ja geht das Spiel eine runde zurück
+        //überprüft ob zurück gegangen werden kann, wenn ja geht das Spiel eine Runde zurück
         if(e.getSource() == backButton){
             if(roundNumber == 1){
                 JOptionPane.showMessageDialog(this, "In der ersten Runde kann nicht zurück gegangen werden.", "Fehler", JOptionPane.ERROR_MESSAGE);
@@ -136,8 +136,26 @@ public class cego_ui extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * geht eine Runde zurück, dazu werden die Punkte und der Checkpot aus dem Cache geladen und anschließend aus dem Cache entfernt
+     */
     public void back(){
+        roundNumber--;
 
+        for(int i = 0; i < numberOfPlayers; i++){
+            float pointsNow = cache[i].get(cache[i].size() - 1);
+            float oldPoints = cache[i].get(cache[i].size() - 2);
+
+            player[i].setPoints(oldPoints - pointsNow);
+            cache[i].remove(cache[i].size() - 1);
+        }
+
+        game.setCheckpot(cache[cache.length - 1].get(cache[cache.length - 1].size() - 2));
+        cache[cache.length - 1].remove(cache[cache.length - 1].size() - 1);
+
+        changeCheckpot();
+        changePoints();
+        roundLabel.setText("Runde: " + roundNumber);
     }
 
     /**
