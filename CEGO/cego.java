@@ -1,3 +1,4 @@
+package CEGO;
 import java.io.*;
 import java.time.LocalDateTime;
 
@@ -70,7 +71,7 @@ class cego{
      */
     public void safeRound(int playedRounds){
         LocalDateTime now = LocalDateTime.now();
-        String location = "savedRounds/" + now.toString().replace(":", ".") + ".txt";
+        String location = "./CEGO/savedRounds/" + now.toString().replace(":", ".") + ".txt";
         try(PrintWriter pWriter = new PrintWriter(new FileWriter(location, false));){
             pWriter.println(playedRounds);
             for(int i = 0; i < player.length; i++){

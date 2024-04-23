@@ -1,3 +1,4 @@
+package CEGO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -17,7 +18,6 @@ public class cego_ui extends JFrame implements ActionListener {
     private int numberOfPlayers;
     private cego_player[] player;
     private cego game;
-    private boolean isBonusRound;
 
     /**
      * Konstruktor für das Cego-Punkte-Fenster
@@ -32,7 +32,7 @@ public class cego_ui extends JFrame implements ActionListener {
         roundNumber = 1;
 
         //Titel, Größe, Schließoptionen und Layout werden gesetzt
-        setTitle("Score Tracker");
+        setTitle("Cego");
         setSize(600, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
@@ -79,7 +79,6 @@ public class cego_ui extends JFrame implements ActionListener {
 
         setVisible(true);
 
-        isBonusRound = false;
         game.startRound();
     }
 
@@ -155,10 +154,8 @@ public class cego_ui extends JFrame implements ActionListener {
                 for(int i = 0; i < player.length; i++){
                     player[i] = playersWithoutStitch.get(i);
                 }
-                isBonusRound = true;
                 game.bonusRound(player);
             }else{
-                isBonusRound = false;
                 game.startRound();
             }
     }

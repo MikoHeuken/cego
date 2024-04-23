@@ -1,3 +1,4 @@
+package CEGO;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,7 +40,7 @@ public class cego_player {
     }
 
     public static cego_player[] getSavedPlayers(){
-        String fileName = "./text.txt";
+        String fileName = "./CEGO/text.txt";
         cego_player[] returnPlayer = null;
         List<String> lines = null;
 

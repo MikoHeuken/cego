@@ -1,0 +1,14 @@
+Cego:
+evt Fenster verschönern
+zurück knopf
+Einsatz mitgeben
+
+Kniffel ? 
+Wizard ? 
+
+Launcher, zum Auswählen des Spieles
+
+Spieler laden
+Spiel speichern
+Spielverlauf speichern
+Statistiken
