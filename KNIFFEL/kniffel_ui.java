@@ -17,26 +17,32 @@ public class kniffel_ui extends JFrame implements ActionListener {
     private int currentPlayerIndex = 0;
     private kniffel_player[] player;
 
+    /**
+     * Konstruktor für das UI für Kniffel
+     * @param player die Spieler welche in diesem Spiel teilnehmen
+     */
     @SuppressWarnings("unchecked")
     public kniffel_ui(kniffel_player[] player) {
         this.player = player;
         numberOfPlayers = player.length;
         setTitle("Kniffel");
+        setSize(4000, 3000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // Kategorien-Panel
+        //Kategorien-Panel, wird an der linken Seite angezeigt
         JPanel categoriesPanel = new JPanel(new GridLayout(categories.length + 1, 1));
             categoriesPanel.add(new JLabel());
         for (String category : categories) {
             categoriesPanel.add(new JLabel(category));
         }
 
-        // Spieler-Panel
+        //Spieler-Panel, wird oben horizontal angezeigt
         JPanel playerPanel = new JPanel(new GridLayout(1, numberOfPlayers + 1));
         scoreSelectors = new JComboBox[categories.length][numberOfPlayers];
 
+        //fügt jedem Spieler für jede Kategorie ein passendes Dropdown Menu zum Auswählen der Punkte hinzu
         for (int i = 0; i < numberOfPlayers; i++) {
             JPanel playerColumn = new JPanel(new GridLayout(categories.length + 1, 1));
                 playerColumn.add(new JLabel(player[i].getName()));
@@ -47,22 +53,26 @@ public class kniffel_ui extends JFrame implements ActionListener {
             playerPanel.add(playerColumn);
         }
 
-        // Button zum nächsten Spieler
+        //Button zum nächsten Spieler
         nextPlayerButton = new JButton("Nächster Spieler");
         nextPlayerButton.addActionListener(this);
 
-        // Layout
+        //füßgt die alle Panels dem mainPanel hinzu
         mainPanel.add(categoriesPanel, BorderLayout.WEST);
         mainPanel.add(playerPanel, BorderLayout.CENTER);
         mainPanel.add(nextPlayerButton, BorderLayout.SOUTH);
 
         add(mainPanel);
 
-        pack();
         setLocationRelativeTo(null); // Zentriere das Fenster
         setVisible(true);
     }
 
+    /**
+     * gibt jedem Dropdown Menu die Optionen vor, so dass nur gültige Punkte eingetragen werden können
+     * @param categorie die Kategorie des Dropdown Menus
+     * @return gibt die möglichen Punkte zu der Kategorie zurück
+     */
     private Integer[] dropDownOptions(String categorie){
       ArrayList<Integer> options = new ArrayList<>();
       options.add(0);
@@ -140,8 +150,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == nextPlayerButton) {
-            currentPlayerIndex++;
-            JOptionPane.showMessageDialog(this, "Spieler " + (currentPlayerIndex % numberOfPlayers + 1) + " ist jetzt dran.");
+          
         }
     }
 
