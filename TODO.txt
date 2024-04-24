@@ -1,9 +1,17 @@
 Cego:
 evt Fenster verschönern
-zurück knopf
-Einsatz mitgeben
 
-Kniffel ? 
+Kniffel:
+Anzeige, welcher Spieler an der Reihe ist
+Überprüfen ob der Spieler Punkte eintragen darf, wenn ja Punkte einloggen
+Überprüfen, dass der richtige Spieler nur eine Option eingeloggt hat
+Felder streichen
+Zurück Button
+Felder für obere Hälfte, Bonus, untere hälfte und Summe
+Spiel speichern und unterbrechen/Spiel abschließen Button, bei Spielabschluss, Spieler nach Punkten sortiert ausgeben
+im Launcher unterbrochenes Spiel laden, dazu im File speichern ob Spiel unterbrochen oder beendet
+größe Fullscreen setzen
+
 Wizard ? 
 
 Launcher, zum Auswählen des Spieles
