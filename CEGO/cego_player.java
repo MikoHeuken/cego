@@ -28,7 +28,7 @@ public class cego_player {
     }
 
     public static void safePlayer(cego_player[] cegoPlayer){
-        String location = "./stuff/cego/text.txt";
+        String location = "./CEGO/text.txt";
         try (PrintWriter pWriter = new PrintWriter(new FileWriter(location, true));){
             //pWriter.println("Hallo Welt!");
             for(int i = 0; i < cegoPlayer.length; i++){
