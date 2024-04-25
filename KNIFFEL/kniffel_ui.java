@@ -16,6 +16,12 @@ public class kniffel_ui extends JFrame implements ActionListener {
     private JButton nextPlayerButton;
     private JLabel roundLabel;
     private JLabel currentPlayerLabel;
+    private JLabel[] upperHalfLabel;
+    private JLabel[] bonusLabel;
+    private JLabel[] totalUpperHalfLabelUp;
+    private JLabel[] totalUpperHalfLabelDown;                                                                             
+    private JLabel[] lowerHalfLabel;
+    private JLabel[] totalPointsLabel;
     private int numberOfPlayers;
     private int currentPlayerIndex = 0;
     private kniffel_player[] player;
@@ -48,26 +54,83 @@ public class kniffel_ui extends JFrame implements ActionListener {
         roundAndPlayerPanel.add(roundLabel);
         roundAndPlayerPanel.add(currentPlayerLabel);
 
-        //Kategorien-Panel, wird an der linken Seite angezeigt
-        JPanel categoriesPanel = new JPanel(new GridLayout(categories.length + 1, 1));
-            categoriesPanel.add(new JLabel());
-        for (String category : categories) {
-            categoriesPanel.add(new JLabel(category));
+        //erstellt Arrays an Label, damit jeder Spieler ein eigenständiges Label hat
+        upperHalfLabel = new JLabel[numberOfPlayers];
+        bonusLabel = new JLabel[numberOfPlayers];
+        totalUpperHalfLabelUp = new JLabel[numberOfPlayers];
+        totalUpperHalfLabelDown = new JLabel[numberOfPlayers];
+        lowerHalfLabel = new JLabel[numberOfPlayers];
+        totalPointsLabel = new JLabel[numberOfPlayers];
+
+        //Initialisiert alle Punkte Label mit 0
+        for(int i = 0; i < numberOfPlayers; i++){
+          upperHalfLabel[i] = new JLabel("0");
+          bonusLabel[i] = new JLabel("0");
+          totalUpperHalfLabelUp[i] = new JLabel("0");
+          totalUpperHalfLabelDown[i] = new JLabel("0");
+          lowerHalfLabel[i] = new JLabel("0");
+          totalPointsLabel[i] = new JLabel("0");
+
+          //zentriert den Inhalt mittig
+          upperHalfLabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+          upperHalfLabel[i].setVerticalAlignment(SwingConstants.CENTER);
+          bonusLabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+          bonusLabel[i].setVerticalAlignment(SwingConstants.CENTER);
+          totalUpperHalfLabelUp[i].setHorizontalAlignment(SwingConstants.CENTER);
+          totalUpperHalfLabelUp[i].setVerticalAlignment(SwingConstants.CENTER);
+          totalUpperHalfLabelDown[i].setHorizontalAlignment(SwingConstants.CENTER);
+          totalUpperHalfLabelDown[i].setVerticalAlignment(SwingConstants.CENTER);
+          lowerHalfLabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+          lowerHalfLabel[i].setVerticalAlignment(SwingConstants.CENTER);
+          totalPointsLabel[i].setHorizontalAlignment(SwingConstants.CENTER);
+          totalPointsLabel[i].setVerticalAlignment(SwingConstants.CENTER);
         }
+
+        //Kategorien-Panel, wird an der linken Seite angezeigt, die Zeilenanzahl ist 7 mehr als es Kategorien gibt
+        //6 Zeilen für die Summen/Bonus, eine leere Zeile oben damit die Kategorien nicht in der Zeile mit den Namen stehen
+        JPanel categoriesPanel = new JPanel(new GridLayout(categories.length + 7, 1));
+        categoriesPanel.add(new JLabel());
+        for(int i = 0; i < categories.length; i++){
+          categoriesPanel.add(new JLabel(categories[i]));
+
+          if(i == 5){
+            categoriesPanel.add(new JLabel("Summe oben"));
+            categoriesPanel.add(new JLabel("Bonus (63 oder mehr)"));
+            categoriesPanel.add(new JLabel("Summe oben gesamt"));
+          }
+        }
+        categoriesPanel.add(new JLabel("Summe oben"));
+        categoriesPanel.add(new JLabel("Summe unten"));
+        categoriesPanel.add(new JLabel("Summe gesamt"));
 
         //Spieler-Panel, wird oben horizontal angezeigt
         JPanel playerPanel = new JPanel(new GridLayout(1, numberOfPlayers + 1));
         scoreSelectors = new JComboBox[numberOfPlayers][categories.length];
 
-        //fügt jedem Spieler für jede Kategorie ein passendes Dropdown Menu zum Auswählen der Punkte hinzu
+        //fügt jedem Spieler für jede Kategorie ein passendes Dropdown Menu zum Auswählen der Punkte hinzu, dazwischen werden Felder für die Punkte hinzugefügt
         for (int i = 0; i < numberOfPlayers; i++) {
-            JPanel playerColumn = new JPanel(new GridLayout(categories.length + 1, 1));
-                playerColumn.add(new JLabel(player[i].getName()));
+            JPanel playerColumn = new JPanel(new GridLayout(categories.length + 7, 1));
+
+            JLabel playerLabel = new JLabel(player[i].getName());
+            Font font = playerLabel.getFont();
+            playerLabel.setFont(new Font(font.getName(), Font.PLAIN, 18));
+            playerColumn.add(playerLabel);
+
             for (int j = 0; j < categories.length; j++) {
                 scoreSelectors[i][j] = new JComboBox<>(dropDownOptions(categories[j]));
                 scoreSelectors[i][j].setSelectedItem(null);
                 playerColumn.add(scoreSelectors[i][j]);
+
+                if(j == 5){
+                  playerColumn.add(upperHalfLabel[i]);
+                  playerColumn.add(bonusLabel[i]);
+                  playerColumn.add(totalUpperHalfLabelUp[i]);
+                }
             }
+            playerColumn.add(totalUpperHalfLabelDown[i]);
+            playerColumn.add(lowerHalfLabel[i]);
+            playerColumn.add(totalPointsLabel[i]);
+
             playerPanel.add(playerColumn);
         }
 
@@ -218,7 +281,13 @@ public class kniffel_ui extends JFrame implements ActionListener {
     public void logCategorie(int categorieIndex, int currentPlayerIndex){
       int chosenOption = (Integer) scoreSelectors[currentPlayerIndex][categorieIndex].getSelectedItem();
       scoreSelectors[currentPlayerIndex][categorieIndex].setEnabled(false);
-      player[currentPlayerIndex].changePoints(chosenOption);
+
+      //prüft ob die Punkte in der oberen Hälfte oder der unteren Hälfte erzielt wurden
+      if(categorieIndex < 6){
+        player[currentPlayerIndex].changePointsUpperHalf(chosenOption, currentPlayerIndex, this);
+      }else{
+        player[currentPlayerIndex].changePointsLowerHalf(chosenOption, currentPlayerIndex, this);
+      }
     }
 
     public boolean onlyOneOptionChosen(int playerNr){
@@ -247,6 +316,60 @@ public class kniffel_ui extends JFrame implements ActionListener {
           }
       }
       return -1;
+    }
+
+    /**
+     * ändert das Punkte Label welches die oberen Punkte vor Bonus anzeigt
+     * @param playerNr der betroffene Spieler
+     * @param text der neue Wert für das Label
+     */
+    public void setUpperHalfLabel(int playerNr, String text){
+      upperHalfLabel[playerNr].setText(text);
+    }
+
+    /**
+     * ändert das Punkte Label welches die gesamten Punkte von oben, unten am Spielrand anzeigt
+     * @param playerNr der betroffene Spieler
+     * @param text der neue Wert für das Label
+     */
+    public void setTotalUpperHalfDownLabel(int playerNr, String text){
+      totalUpperHalfLabelDown[playerNr].setText(text);
+    }
+
+    /**
+     * ändert das Punkte Label welches den Bonus anzeigt
+     * @param playerNr der betroffene Spieler 
+     * @param text der neue Wert für das Label
+     */
+    public void setBonusLabel(int playerNr, String text){
+      bonusLabel[playerNr].setText(text);
+    }
+
+    /**
+     * ändert das Punkte Label welches die gesamten Punkte von oben, oben nach dem Bonus anzeigt
+     * @param playerNr der betroffene Spieler
+     * @param text der neue Wert für das Label
+     */
+    public void setTotalUpperHalfUpLabel(int playerNr, String text){
+      totalUpperHalfLabelUp[playerNr].setText(text);
+    }
+
+    /**
+     * ändert das Label welches die Punkte von unten aneigt
+     * @param playerNr der betroffene Spieler
+     * @param text der neue Wert für das Label
+     */
+    public void setLowerHalfLabel(int playerNr, String text){
+      lowerHalfLabel[playerNr].setText(text);
+    }
+
+    /**
+     * ändert das Label welches die Gesamtpunkte anzeigt
+     * @param playerNr der betrofene Spieler
+     * @param text der neue Wert für das Label
+     */
+    public void setTotalPointsLabel(int playerNr, String text){
+      totalPointsLabel[playerNr].setText(text);
     }
 
     public void setRoundLabel(){
