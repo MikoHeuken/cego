@@ -25,12 +25,22 @@ public class kniffel_player {
 
     ui.setUpperHalfLabel(playerNr, String.valueOf(sumUpperHalf));
 
+    //wenn noch kein Bonus gesetzt ist, wird dieser gesetzt und zu totalSumUpperHalf addiert
     if(bonus != 35 && sumUpperHalf >= 63){
       bonus = 35;
       totalSumUpperHalf += 35;
 
       ui.setBonusLabel(playerNr, "35");
       changePoints(bonus, playerNr, ui);
+    }
+
+    //wenn ein Wert abgezogen wird und der Bonus damit nichtmehr gegben ist, entferne diesen
+    if(value < 0 && bonus == 35 && sumUpperHalf < 63){
+      bonus = 0;
+      totalSumUpperHalf -= 35;
+
+      ui.setBonusLabel(playerNr, "0");
+      changePoints(-35, playerNr, ui);
     }
 
     ui.setTotalUpperHalfUpLabel(playerNr, String.valueOf(totalSumUpperHalf));

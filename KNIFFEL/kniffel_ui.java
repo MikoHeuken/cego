@@ -14,6 +14,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
 
     private JComboBox<Integer>[][] scoreSelectors;
     private JButton nextPlayerButton;
+    private JButton backButton;
     private JLabel roundLabel;
     private JLabel currentPlayerLabel;
     private JLabel[] upperHalfLabel;
@@ -26,6 +27,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
     private int currentPlayerIndex = 0;
     private kniffel_player[] player;
     private int roundNr;
+    private ArrayList<Integer>[] cache;
 
     /**
      * Konstruktor für das UI für Kniffel
@@ -36,6 +38,11 @@ public class kniffel_ui extends JFrame implements ActionListener {
         this.player = player;
         numberOfPlayers = player.length;
         roundNr = 1;
+        cache = new ArrayList[numberOfPlayers];
+
+        for(int i = 0; i < cache.length; i++){
+          cache[i] = new ArrayList<>();
+        }
 
         setTitle("Kniffel");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -148,14 +155,22 @@ public class kniffel_ui extends JFrame implements ActionListener {
             playerPanel.add(playerColumn);
         }
 
-        //Button zum nächsten Spieler
+        //nextPlayerButton und backButton
+        JPanel buttonPanel = new JPanel(new GridLayout(1,2));
+
+        backButton = new JButton("Zurück");
+        backButton.addActionListener(this);
+
         nextPlayerButton = new JButton("Nächster Spieler");
         nextPlayerButton.addActionListener(this);
+
+        buttonPanel.add(backButton);
+        buttonPanel.add(nextPlayerButton);
 
         //füßgt die alle Panels dem mainPanel hinzu
         mainPanel.add(categoriesPanel, BorderLayout.WEST);
         mainPanel.add(playerPanel, BorderLayout.CENTER);
-        mainPanel.add(nextPlayerButton, BorderLayout.SOUTH);
+        mainPanel.add(buttonPanel, BorderLayout.SOUTH);
         mainPanel.add(roundAndPlayerPanel, BorderLayout.NORTH);
 
         add(mainPanel);
@@ -245,6 +260,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        //wenn der  nextPlayerButton gedrückt wurde
         if (e.getSource() == nextPlayerButton) {
           int chosenCategorie = whichOptionWasChosen(currentPlayerIndex);
           if(chosenCategorie != -1 && onlyOneOptionChosen(currentPlayerIndex)){
@@ -258,6 +274,51 @@ public class kniffel_ui extends JFrame implements ActionListener {
             JOptionPane.showMessageDialog(this, "Es darf nur genau eine Option ausgewählt sein.", "Fehler", JOptionPane.ERROR_MESSAGE);
           }
         }
+
+        //wenn der Zurück-Button gedrückt wurde
+        if(e.getSource() == backButton){
+          if(currentPlayerIndex == 0 && roundNr == 1){
+            JOptionPane.showMessageDialog(this, "Es kann nicht zurückgegangen werden.", "Fehler", JOptionPane.ERROR_MESSAGE);
+          }else{
+            back();
+          }
+        }
+    }
+
+    /**
+     * wird aufgerufen wenn der backButton betätigt wird
+     * macht den letzten Zug rückgängig
+     */
+    public void back(){
+      lastPlayer();
+      int lastChosenCategorie = cache[currentPlayerIndex].get(cache[currentPlayerIndex].size() - 1);
+
+      //gibt das zuletzt ausgewählte Item frei, setzt das entsprechende Feld auf null und löscht das Item aus dem Cache
+      scoreSelectors[currentPlayerIndex][lastChosenCategorie].setEnabled(true);
+      int chosenOption = (Integer) scoreSelectors[currentPlayerIndex][lastChosenCategorie].getSelectedItem();
+      scoreSelectors[currentPlayerIndex][lastChosenCategorie].setSelectedItem(null);
+      cache[currentPlayerIndex].remove(cache[currentPlayerIndex].size() - 1);
+
+      //entfernt dem Spieler seine Punkte wieder
+      if(lastChosenCategorie < 6){
+        player[currentPlayerIndex].changePointsUpperHalf(-chosenOption, currentPlayerIndex, this);
+      }else{
+        player[currentPlayerIndex].changePointsLowerHalf(-chosenOption, currentPlayerIndex, this);
+      }
+    }
+
+    /**
+     * setzt currentPlayerIndex auf den vorherigen Spieler
+     */
+    public void lastPlayer(){
+      if(currentPlayerIndex == 0){
+        roundNr--;
+        currentPlayerIndex = numberOfPlayers - 1;
+      }else{
+        currentPlayerIndex--;
+      }
+      setRoundLabel();
+      setPlayerLabel();
     }
 
     /**
@@ -274,6 +335,11 @@ public class kniffel_ui extends JFrame implements ActionListener {
       setPlayerLabel();
     }
 
+    /**
+     * prüft ob nur der Spieler, welcher an der Reihe ist eine Option ausgewählt hat
+     * @param playerNr der Spieler welcher an der Reihe ist
+     * @return true, wenn nur der richtige Spieler eine Option ausgewählt hat
+     */
     public boolean onlyCurrentPlayerChose(int playerNr){
       for(int i = 0; i < numberOfPlayers; i++){
         for(int j = 0; j < scoreSelectors[i].length; j++){
@@ -289,12 +355,15 @@ public class kniffel_ui extends JFrame implements ActionListener {
 
     /**
      * loggt die Ausgeählte Kategorie für den Spieler ein und gibt dem Spieler die entsprechenden Punkte
+     * der Index der Auswahl wird im Cache gespeichert
      * @param categorieIndex der Index der eingeloggten Kategorie
      * @param currentPlayerIndex der betroffene Spieler
      */
     public void logCategorie(int categorieIndex, int currentPlayerIndex){
       int chosenOption = (Integer) scoreSelectors[currentPlayerIndex][categorieIndex].getSelectedItem();
       scoreSelectors[currentPlayerIndex][categorieIndex].setEnabled(false);
+
+      cache[currentPlayerIndex].add(categorieIndex);
 
       //prüft ob die Punkte in der oberen Hälfte oder der unteren Hälfte erzielt wurden
       if(categorieIndex < 6){
