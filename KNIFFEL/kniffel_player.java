@@ -76,6 +76,15 @@ public class kniffel_player {
     ui.setTotalPointsLabel(playernr, String.valueOf(points));
   }
 
+  /**
+   * ändert einen Wert im pointsInCategories Array; wird verwendet um von kniffel_ui gestrichene Werte zu setzen
+   * @param index die betroffene Kategorie
+   * @param value der Wert, welcher an der Stelle eingesetzt wird
+   */
+  public void setPointsInCategory(int index, int value){
+    pointsInCategories[index] = value;
+  }
+
   public int getPoints(){
     return points;
   }

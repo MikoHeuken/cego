@@ -339,11 +339,10 @@ public class kniffel_ui extends JFrame implements ActionListener {
     /**
      * ordnet die Spieler der Punktezahl nach mit dem Bubblesort
      */
-    //TODO ordnet nicht richtig
     public void orderPlayer(){
       for(int i = 0; i < numberOfPlayers; i++){
         for(int j = 0; j < numberOfPlayers; j++){
-          if(player[i].getPoints() < player[j].getPoints()){
+          if(player[i].getPoints() > player[j].getPoints()){
             kniffel_player temp = player[i];
             player[i] = player[j];
             player[j] = temp;
@@ -357,7 +356,6 @@ public class kniffel_ui extends JFrame implements ActionListener {
      * @param disrupted true, wenn die Runde nur unterbrochen wurde, diese Runde kann später fortgesetzt werden;  false, wenn die Runde zu Ende gespielt wurde
      */
     public void disruptRound(boolean disrupted){
-      //TODO Ausgabe, wenn eine Kategorie gestrichen wurde
       LocalDateTime now = LocalDateTime.now();
       String location = "./KNIFFEL/savedRounds/" + now.toString().replace(":", ".") + ".txt";
 
@@ -398,6 +396,8 @@ public class kniffel_ui extends JFrame implements ActionListener {
         }else{
           player[currentPlayerIndex].changePointsLowerHalf(lastChosenCategorie, -chosenOption, currentPlayerIndex, this);
         }
+      }else{
+        player[currentPlayerIndex].setPointsInCategory(lastChosenCategorie, 0);
       }
       scoreSelectors[currentPlayerIndex][lastChosenCategorie].setSelectedItem(null);
       cache[currentPlayerIndex].remove(cache[currentPlayerIndex].size() - 1);
@@ -471,6 +471,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
       }else{
         scoreSelectors[currentPlayerIndex][categorieIndex].setEnabled(false);
         cache[currentPlayerIndex].add(categorieIndex);
+        player[currentPlayerIndex].setPointsInCategory(categorieIndex, -1);
       }
     }
 
