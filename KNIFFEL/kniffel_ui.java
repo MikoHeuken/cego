@@ -278,6 +278,9 @@ public class kniffel_ui extends JFrame implements ActionListener {
             if(onlyCurrentPlayerChose(currentPlayerIndex)){
               logCategorie(chosenCategorie, currentPlayerIndex);
               nextPlayer();
+              if(roundNr == 14){
+                finishGame();
+              }
             }else{
               JOptionPane.showMessageDialog(this, "In dieser Runde darf nur " + player[currentPlayerIndex].getName() + " eine Auswahl treffen.", "Fehler", JOptionPane.ERROR_MESSAGE);
             }
@@ -301,10 +304,22 @@ public class kniffel_ui extends JFrame implements ActionListener {
     }
 
     /**
+     * öffnet nach Ende des Spieles ein Fenster mit der Abfrage ob das Spiel fertig ist
+     */
+    public void finishGame(){
+      //TODO wenn OK gewählt wird, zeige die Gewinner absteiged an
+      int result = JOptionPane.showConfirmDialog(this, "Ist das Spiel zu Ende?", "Bestätigung", JOptionPane.OK_CANCEL_OPTION);
+      if(result == JOptionPane.OK_OPTION){
+        disruptRound(false);
+      }
+    }
+
+    /**
      * unterbricht/beendet eine Runde und speichert diese
      * @param disrupted true, wenn die Runde nur unterbrochen wurde, diese Runde kann später fortgesetzt werden;  false, wenn die Runde zu Ende gespielt wurde
      */
     public void disruptRound(boolean disrupted){
+      //TODO Ausgabe, wenn eine Kategorie gestrichen wurde
       LocalDateTime now = LocalDateTime.now();
       String location = "./KNIFFEL/savedRounds/" + now.toString().replace(":", ".") + ".txt";
 
