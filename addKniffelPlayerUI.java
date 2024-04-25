@@ -65,7 +65,7 @@ public class addKniffelPlayerUI extends JFrame implements ActionListener {
         if (e.getSource() == addButton) {
             addPlayer();
         }
-        
+
         if(e.getSource() == startGameButton){
           if(nameList.size() >= 1){
             startGame();
@@ -74,7 +74,9 @@ public class addKniffelPlayerUI extends JFrame implements ActionListener {
           }
         }
 
-
+        if(e.getSource() == loadGameButton){
+          
+        }
     }
 
     /**
