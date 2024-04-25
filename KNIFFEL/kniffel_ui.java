@@ -51,6 +51,17 @@ public class kniffel_ui extends JFrame implements ActionListener {
         JPanel roundAndPlayerPanel = new JPanel(new GridLayout(2, 1));
         roundLabel = new JLabel("Runde " + roundNr);
         currentPlayerLabel = new JLabel("Spieler: " + player[currentPlayerIndex].getName());
+
+        Font fontRound = roundLabel.getFont();
+        roundLabel.setFont(new Font(fontRound.getName(), Font.PLAIN, 18));
+        roundLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        roundLabel.setVerticalAlignment(SwingConstants.CENTER);
+
+        Font fontPlayer = currentPlayerLabel.getFont();
+        currentPlayerLabel.setFont(new Font(fontPlayer.getName(), Font.PLAIN, 18));
+        currentPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        currentPlayerLabel.setVerticalAlignment(SwingConstants.CENTER);
+
         roundAndPlayerPanel.add(roundLabel);
         roundAndPlayerPanel.add(currentPlayerLabel);
 
@@ -111,9 +122,12 @@ public class kniffel_ui extends JFrame implements ActionListener {
         for (int i = 0; i < numberOfPlayers; i++) {
             JPanel playerColumn = new JPanel(new GridLayout(categories.length + 7, 1));
 
+            //erstellt das Label für die Spielernamen, macht die Namen größer und zentriert diese
             JLabel playerLabel = new JLabel(player[i].getName());
             Font font = playerLabel.getFont();
             playerLabel.setFont(new Font(font.getName(), Font.PLAIN, 18));
+            playerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            playerLabel.setVerticalAlignment(SwingConstants.CENTER);
             playerColumn.add(playerLabel);
 
             for (int j = 0; j < categories.length; j++) {
