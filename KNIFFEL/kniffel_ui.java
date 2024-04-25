@@ -14,9 +14,12 @@ public class kniffel_ui extends JFrame implements ActionListener {
 
     private JComboBox<Integer>[][] scoreSelectors;
     private JButton nextPlayerButton;
+    private JLabel roundLabel;
+    private JLabel currentPlayerLabel;
     private int numberOfPlayers;
     private int currentPlayerIndex = 0;
     private kniffel_player[] player;
+    private int roundNr;
 
     /**
      * Konstruktor für das UI für Kniffel
@@ -26,6 +29,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
     public kniffel_ui(kniffel_player[] player) {
         this.player = player;
         numberOfPlayers = player.length;
+        roundNr = 1;
 
         setTitle("Kniffel");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,8 +37,16 @@ public class kniffel_ui extends JFrame implements ActionListener {
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
+        //setzt eine Border um das mainPanel
         int borderThickness = (int) (Toolkit.getDefaultToolkit().getScreenResolution() * 0.2);
         mainPanel.setBorder(new EmptyBorder(borderThickness, borderThickness, borderThickness, borderThickness));
+
+        //fügt die aktuelle Runde und den aktuellen Spieler zum Fenster hinzu
+        JPanel roundAndPlayerPanel = new JPanel(new GridLayout(2, 1));
+        roundLabel = new JLabel("Runde " + roundNr);
+        currentPlayerLabel = new JLabel("Spieler: " + player[currentPlayerIndex].getName());
+        roundAndPlayerPanel.add(roundLabel);
+        roundAndPlayerPanel.add(currentPlayerLabel);
 
         //Kategorien-Panel, wird an der linken Seite angezeigt
         JPanel categoriesPanel = new JPanel(new GridLayout(categories.length + 1, 1));
@@ -67,6 +79,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
         mainPanel.add(categoriesPanel, BorderLayout.WEST);
         mainPanel.add(playerPanel, BorderLayout.CENTER);
         mainPanel.add(nextPlayerButton, BorderLayout.SOUTH);
+        mainPanel.add(roundAndPlayerPanel, BorderLayout.NORTH);
 
         add(mainPanel);
 
@@ -175,10 +188,13 @@ public class kniffel_ui extends JFrame implements ActionListener {
      */
     public void nextPlayer(){
       if(currentPlayerIndex == numberOfPlayers - 1){
+        roundNr++;
         currentPlayerIndex = 0;
       }else{
         currentPlayerIndex++;
       }
+      setRoundLabel();
+      setPlayerLabel();
     }
 
     public boolean onlyCurrentPlayerChose(int playerNr){
@@ -231,6 +247,14 @@ public class kniffel_ui extends JFrame implements ActionListener {
           }
       }
       return -1;
+    }
+
+    public void setRoundLabel(){
+      roundLabel.setText("Runde " + roundNr);
+    }
+
+    public void setPlayerLabel(){
+      currentPlayerLabel.setText("Spieler: " + player[currentPlayerIndex].getName());
     }
 
     public static void main(String[] args) {
