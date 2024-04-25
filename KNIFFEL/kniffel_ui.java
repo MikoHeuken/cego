@@ -12,7 +12,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
                                     "3er Pasch", "4er Pasch", "Full House",
                                     "Kleine Straße", "Große Straße", "Kniffel", "Chance"};
 
-    private JComboBox<Integer>[][] scoreSelectors;
+    private JComboBox<String>[][] scoreSelectors;
     private JButton nextPlayerButton;
     private JButton backButton;
     private JLabel roundLabel;
@@ -184,44 +184,44 @@ public class kniffel_ui extends JFrame implements ActionListener {
      * @param categorie die Kategorie des Dropdown Menus
      * @return gibt die möglichen Punkte zu der Kategorie zurück
      */
-    private Integer[] dropDownOptions(String categorie){
-      ArrayList<Integer> options = new ArrayList<>();
+    private String[] dropDownOptions(String categorie){
+      ArrayList<String> options = new ArrayList<>();
       options.add(null);
       
       switch (categorie) {
         case "1er":
           for(int i = 1; i <= 6; i++){
-            options.add(i);
+            options.add(String.valueOf(i));
           }
           break;
 
         case "2er":
           for(int i = 1; i <= 6; i++){
-            options.add(i * 2);
+            options.add(String.valueOf(i * 2));
           }
           break;
 
         case "3er":
           for(int i = 1; i <= 6; i++){
-            options.add(i * 3);
+            options.add(String.valueOf(i * 3));
           }
           break;
 
         case "4er":
           for(int i = 1; i <= 6; i++){
-            options.add(i * 4);
+            options.add(String.valueOf(i * 4));
           }
           break;
 
         case "5er":
           for(int i = 1; i <= 6; i++){
-            options.add(i * 5);
+            options.add(String.valueOf(i * 5));
           }
           break;
 
         case "6er":
           for(int i = 1; i <= 6; i++){
-            options.add(i * 6);
+            options.add(String.valueOf(i * 6));
           }
           break;
 
@@ -229,28 +229,30 @@ public class kniffel_ui extends JFrame implements ActionListener {
         case "4er Pasch":
         case "Chance":
           for(int i = 5; i <= 30; i++){
-            options.add(i);
+            options.add(String.valueOf(i));
           }
           break;
         
         case "Full House":
-          options.add(25);
+          options.add("25");
           break;
 
         case "Kleine Straße":
-          options.add(30);
+          options.add("30");
           break;
 
         case "Große Straße":
-          options.add(40);
+          options.add("40");
           break;
 
         case "Kniffel":
-          options.add(50);
+          options.add("50");
           break;
       }
 
-      Integer[] returnOptions = new Integer[options.size()];
+      options.add("Streichen");
+
+      String[] returnOptions = new String[options.size()];
       for(int i = 0; i < returnOptions.length; i++){
         returnOptions[i] = options.get(i);
       }
@@ -293,18 +295,20 @@ public class kniffel_ui extends JFrame implements ActionListener {
       lastPlayer();
       int lastChosenCategorie = cache[currentPlayerIndex].get(cache[currentPlayerIndex].size() - 1);
 
-      //gibt das zuletzt ausgewählte Item frei, setzt das entsprechende Feld auf null und löscht das Item aus dem Cache
+      //gibt das zuletzt ausgewählte Item frei, setzt das entsprechende Feld auf null, setzt die Punkte zurück und löscht das Item aus dem Cache
       scoreSelectors[currentPlayerIndex][lastChosenCategorie].setEnabled(true);
-      int chosenOption = (Integer) scoreSelectors[currentPlayerIndex][lastChosenCategorie].getSelectedItem();
+      if(!scoreSelectors[currentPlayerIndex][lastChosenCategorie].getSelectedItem().equals("Streichen")){
+        int chosenOption = Integer.parseInt((String) scoreSelectors[currentPlayerIndex][lastChosenCategorie].getSelectedItem());
+
+        //entfernt dem Spieler seine Punkte wieder
+        if(lastChosenCategorie < 6){
+          player[currentPlayerIndex].changePointsUpperHalf(-chosenOption, currentPlayerIndex, this);
+        }else{
+          player[currentPlayerIndex].changePointsLowerHalf(-chosenOption, currentPlayerIndex, this);
+        }
+      }
       scoreSelectors[currentPlayerIndex][lastChosenCategorie].setSelectedItem(null);
       cache[currentPlayerIndex].remove(cache[currentPlayerIndex].size() - 1);
-
-      //entfernt dem Spieler seine Punkte wieder
-      if(lastChosenCategorie < 6){
-        player[currentPlayerIndex].changePointsUpperHalf(-chosenOption, currentPlayerIndex, this);
-      }else{
-        player[currentPlayerIndex].changePointsLowerHalf(-chosenOption, currentPlayerIndex, this);
-      }
     }
 
     /**
@@ -360,16 +364,21 @@ public class kniffel_ui extends JFrame implements ActionListener {
      * @param currentPlayerIndex der betroffene Spieler
      */
     public void logCategorie(int categorieIndex, int currentPlayerIndex){
-      int chosenOption = (Integer) scoreSelectors[currentPlayerIndex][categorieIndex].getSelectedItem();
-      scoreSelectors[currentPlayerIndex][categorieIndex].setEnabled(false);
+      if(!scoreSelectors[currentPlayerIndex][categorieIndex].getSelectedItem().equals("Streichen")){
+        int chosenOption = Integer.parseInt((String) scoreSelectors[currentPlayerIndex][categorieIndex].getSelectedItem());
+        scoreSelectors[currentPlayerIndex][categorieIndex].setEnabled(false);
 
-      cache[currentPlayerIndex].add(categorieIndex);
+        cache[currentPlayerIndex].add(categorieIndex);
 
-      //prüft ob die Punkte in der oberen Hälfte oder der unteren Hälfte erzielt wurden
-      if(categorieIndex < 6){
-        player[currentPlayerIndex].changePointsUpperHalf(chosenOption, currentPlayerIndex, this);
+        //prüft ob die Punkte in der oberen Hälfte oder der unteren Hälfte erzielt wurden
+        if(categorieIndex < 6){
+          player[currentPlayerIndex].changePointsUpperHalf(chosenOption, currentPlayerIndex, this);
+        }else{
+          player[currentPlayerIndex].changePointsLowerHalf(chosenOption, currentPlayerIndex, this);
+        }
       }else{
-        player[currentPlayerIndex].changePointsLowerHalf(chosenOption, currentPlayerIndex, this);
+        scoreSelectors[currentPlayerIndex][categorieIndex].setEnabled(false);
+        cache[currentPlayerIndex].add(categorieIndex);
       }
     }
 
