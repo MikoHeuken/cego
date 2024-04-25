@@ -307,10 +307,48 @@ public class kniffel_ui extends JFrame implements ActionListener {
      * öffnet nach Ende des Spieles ein Fenster mit der Abfrage ob das Spiel fertig ist
      */
     public void finishGame(){
-      //TODO wenn OK gewählt wird, zeige die Gewinner absteiged an
       int result = JOptionPane.showConfirmDialog(this, "Ist das Spiel zu Ende?", "Bestätigung", JOptionPane.OK_CANCEL_OPTION);
       if(result == JOptionPane.OK_OPTION){
         disruptRound(false);
+
+        //erzeuge ein neues Fenster
+        JFrame winner = new JFrame();
+        winner.setTitle("Rangliste");
+        winner.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        winner.setSize(400, numberOfPlayers * 200);
+
+        orderPlayer();
+        
+        JPanel winnerPanel = new JPanel(new GridLayout(numberOfPlayers + 1, 3));
+        winnerPanel.add(new JLabel());
+        winnerPanel.add(new JLabel("Sieger Reihenfolge"));
+        winnerPanel.add(new JLabel());
+
+        for(int i = 0; i < numberOfPlayers; i++){
+          winnerPanel.add(new JLabel((i + 1) + ".:"));
+          winnerPanel.add(new JLabel(player[i].getName()));
+          winnerPanel.add(new JLabel(String.valueOf(player[i].getPoints())));
+        }
+
+        winner.add(winnerPanel);
+        winner.setLocationRelativeTo(null); // Zentriere das Fenster
+        winner.setVisible(true);
+      }
+    }
+
+    /**
+     * ordnet die Spieler der Punktezahl nach mit dem Bubblesort
+     */
+    //TODO ordnet nicht richtig
+    public void orderPlayer(){
+      for(int i = 0; i < numberOfPlayers; i++){
+        for(int j = 0; j < numberOfPlayers; j++){
+          if(player[i].getPoints() < player[j].getPoints()){
+            kniffel_player temp = player[i];
+            player[i] = player[j];
+            player[j] = temp;
+          }
+        }
       }
     }
 
