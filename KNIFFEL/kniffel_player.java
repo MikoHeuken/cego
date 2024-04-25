@@ -7,10 +7,12 @@ public class kniffel_player {
   private int sumUpperHalf = 0;
   private int totalSumUpperHalf = 0;
   private int sumLowerHalf = 0;
+  private int[] pointsInCategories;
 
   public kniffel_player(String name){
     this.name = name;
     points = 0;
+    pointsInCategories = new int[13];
   }
 
   /**
@@ -19,7 +21,8 @@ public class kniffel_player {
    * @param playerNr die Spieler Nummer, wichtig damit das richtige Label geändert werden kann
    * @param ui die ui-Klasse, welche die Methode aufruft
    */
-  public void changePointsUpperHalf(int value, int playerNr, kniffel_ui ui){
+  public void changePointsUpperHalf(int categoryIndex, int value, int playerNr, kniffel_ui ui){
+    pointsInCategories[categoryIndex] += value;
     sumUpperHalf += value;
     totalSumUpperHalf += value;
 
@@ -55,7 +58,8 @@ public class kniffel_player {
    * @param playerNr die Spielernummer, wichtig damit das richtige Label geändert werden kann
    * @param ui die UI-Klasse, welche die Methode aufruft
    */
-  public void changePointsLowerHalf(int value, int playerNr, kniffel_ui ui){
+  public void changePointsLowerHalf(int categoryIndex, int value, int playerNr, kniffel_ui ui){
+    pointsInCategories[categoryIndex] += value;
     sumLowerHalf += value;
     ui.setLowerHalfLabel(playerNr, String.valueOf(sumLowerHalf));
     changePoints(value, playerNr, ui);
@@ -90,5 +94,9 @@ public class kniffel_player {
 
   public int getBonus(){
     return bonus;
+  }
+
+  public int[] getPointsInCategories(){
+    return pointsInCategories;
   }
 }

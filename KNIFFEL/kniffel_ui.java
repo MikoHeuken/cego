@@ -5,6 +5,10 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class kniffel_ui extends JFrame implements ActionListener {
@@ -15,6 +19,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
     private JComboBox<String>[][] scoreSelectors;
     private JButton nextPlayerButton;
     private JButton backButton;
+    private JButton disruptButton;
     private JLabel roundLabel;
     private JLabel currentPlayerLabel;
     private JLabel[] upperHalfLabel;
@@ -155,7 +160,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
             playerPanel.add(playerColumn);
         }
 
-        //nextPlayerButton und backButton
+        //nextPlayerButton, disruptButon und backButton
         JPanel buttonPanel = new JPanel(new GridLayout(1,2));
 
         backButton = new JButton("Zurück");
@@ -164,10 +169,14 @@ public class kniffel_ui extends JFrame implements ActionListener {
         nextPlayerButton = new JButton("Nächster Spieler");
         nextPlayerButton.addActionListener(this);
 
+        disruptButton = new JButton("Runde unterbrechen");
+        disruptButton.addActionListener(this);
+
         buttonPanel.add(backButton);
         buttonPanel.add(nextPlayerButton);
+        buttonPanel.add(disruptButton);
 
-        //füßgt die alle Panels dem mainPanel hinzu
+        //fügt die alle Panels dem mainPanel hinzu
         mainPanel.add(categoriesPanel, BorderLayout.WEST);
         mainPanel.add(playerPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -285,6 +294,36 @@ public class kniffel_ui extends JFrame implements ActionListener {
             back();
           }
         }
+
+        if(e.getSource() == disruptButton){
+          disruptRound(true);
+        }
+    }
+
+    /**
+     * unterbricht/beendet eine Runde und speichert diese
+     * @param disrupted true, wenn die Runde nur unterbrochen wurde, diese Runde kann später fortgesetzt werden;  false, wenn die Runde zu Ende gespielt wurde
+     */
+    public void disruptRound(boolean disrupted){
+      LocalDateTime now = LocalDateTime.now();
+      String location = "./KNIFFEL/savedRounds/" + now.toString().replace(":", ".") + ".txt";
+
+      try(PrintWriter pWriter = new PrintWriter(new FileWriter(location, false));){
+        pWriter.println(disrupted + "," + roundNr + "," + currentPlayerIndex);
+
+        for(int i = 0; i < numberOfPlayers; i++){
+          pWriter.print(player[i].getName());
+          int[] pointsInCategories = player[i].getPointsInCategories();
+          for(int j = 0; j < pointsInCategories.length; j++){
+            pWriter.print("," + pointsInCategories[j]);
+          }
+          pWriter.println();
+        }
+      }catch (IOException ioe){
+          ioe.printStackTrace();
+      }
+
+      dispose();
     }
 
     /**
@@ -302,9 +341,9 @@ public class kniffel_ui extends JFrame implements ActionListener {
 
         //entfernt dem Spieler seine Punkte wieder
         if(lastChosenCategorie < 6){
-          player[currentPlayerIndex].changePointsUpperHalf(-chosenOption, currentPlayerIndex, this);
+          player[currentPlayerIndex].changePointsUpperHalf(lastChosenCategorie, -chosenOption, currentPlayerIndex, this);
         }else{
-          player[currentPlayerIndex].changePointsLowerHalf(-chosenOption, currentPlayerIndex, this);
+          player[currentPlayerIndex].changePointsLowerHalf(lastChosenCategorie, -chosenOption, currentPlayerIndex, this);
         }
       }
       scoreSelectors[currentPlayerIndex][lastChosenCategorie].setSelectedItem(null);
@@ -372,9 +411,9 @@ public class kniffel_ui extends JFrame implements ActionListener {
 
         //prüft ob die Punkte in der oberen Hälfte oder der unteren Hälfte erzielt wurden
         if(categorieIndex < 6){
-          player[currentPlayerIndex].changePointsUpperHalf(chosenOption, currentPlayerIndex, this);
+          player[currentPlayerIndex].changePointsUpperHalf(categorieIndex, chosenOption, currentPlayerIndex, this);
         }else{
-          player[currentPlayerIndex].changePointsLowerHalf(chosenOption, currentPlayerIndex, this);
+          player[currentPlayerIndex].changePointsLowerHalf(categorieIndex, chosenOption, currentPlayerIndex, this);
         }
       }else{
         scoreSelectors[currentPlayerIndex][categorieIndex].setEnabled(false);
