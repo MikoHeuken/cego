@@ -75,7 +75,8 @@ public class addKniffelPlayerUI extends JFrame implements ActionListener {
         }
 
         if(e.getSource() == loadGameButton){
-          
+          new kniffel_loadGameUI();
+          dispose();
         }
     }
 

@@ -357,7 +357,7 @@ public class kniffel_ui extends JFrame implements ActionListener {
      */
     public void disruptRound(boolean disrupted){
       LocalDateTime now = LocalDateTime.now();
-      String location = "./KNIFFEL/savedRounds/" + now.toString().replace(":", ".") + ".txt";
+      String location = "./KNIFFEL/savedRounds/" + now.toString().replace(":", "-").replace("T", "-").replace(".", "-") + ".txt";
 
       try(PrintWriter pWriter = new PrintWriter(new FileWriter(location, false));){
         pWriter.println(disrupted + "," + roundNr + "," + currentPlayerIndex);
