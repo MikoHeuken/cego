@@ -47,7 +47,7 @@ public class gameChooserUI extends JFrame implements ActionListener{
       if(e.getSource() == kniffelButton){
         dispose();
         new addKniffelPlayerUI();
-      }
+      }  
   }
 
   public static void main(String[] args){

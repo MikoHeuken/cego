@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import javax.swing.*;
 
@@ -45,6 +47,7 @@ public class kniffel_loadGameUI extends JFrame implements ActionListener{
       gamesToLoadButtons[i].addActionListener(this);
     }
 
+    //fügt alle Inhalte dem mainPanel hinzu
     JPanel mainPanel = new JPanel(new GridLayout(gamesToLoadButtons.length + 1, 1));
     JLabel description = new JLabel("Welches abgebrochene Spiel willst du wählen?");
     description.setHorizontalAlignment(SwingConstants.CENTER);
@@ -55,6 +58,7 @@ public class kniffel_loadGameUI extends JFrame implements ActionListener{
       mainPanel.add(gamesToLoadButtons[i]);
     }
 
+    //Einstellungen für das Hauptfenster
     add(mainPanel);
     setTitle("Spiel laden");
     setSize(600, 100 * gamesToLoadButtons.length);
@@ -90,7 +94,39 @@ public class kniffel_loadGameUI extends JFrame implements ActionListener{
 
   @Override
   public void actionPerformed(ActionEvent e) {
-        
+    for(int  i = 0; i < gamesToLoadButtons.length; i++){
+      if(gamesToLoadButtons[i] == e.getSource()){
+        startGameFromFile(i);
+      }
+    }
+  }
+
+  /**
+   * startet eine unterbrochene Runde neu
+   * @param index die Stelle im Array, an dem die Datei mit den Spieldaten liegt
+   */
+  public void startGameFromFile(int index){
+    String fileName = "./KNIFFEL/savedRounds/" + discardedFileNames[index];
+    kniffel_player[] loadPlayer = null;
+    ArrayList<String> lines = null;
+
+    try {
+      lines = (ArrayList<String>) Files.readAllLines(Path.of(fileName));           //liest alle Zeilen ein
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    loadPlayer = new kniffel_player[lines.size() - 1];
+    for(int i = 1; i < lines.size(); i++){
+      String[] temp = lines.get(i).split(",");
+      int[] pointsInCategories = new int[temp.length - 1];
+      for(int j = 1; j < temp.length; j++){
+        pointsInCategories[j - 1] = Integer.parseInt(temp[j]);
+      }
+      //loadPlayer[i - 1] = new kniffel_player(temp[0], pointsInCategories);
+      System.out.println(temp[0]);
+      //TODO player konstruktor schreiben; an gestrichene werte denken; in kniffel_ui methode um geladenes spiel zu starten,
+    }
   }
 
   public boolean isDiscardedGame(String textFileName){

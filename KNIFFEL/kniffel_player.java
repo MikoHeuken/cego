@@ -16,6 +16,24 @@ public class kniffel_player {
   }
 
   /**
+   * Konstruktor um einen Spieler aus einem unterbrochenen Spiel zu erstellen
+   * @param name
+   * @param pointsInCategories
+   */
+  public kniffel_player(String name, int[] pointsInCategories, kniffel_ui ui, int playerNr){
+    this.name = name;
+    this.pointsInCategories = pointsInCategories;
+
+    for(int i = 0; i < pointsInCategories.length; i++){
+      if(i < 6 && pointsInCategories[i] != -1){
+        changePointsUpperHalf(i, pointsInCategories[i], playerNr, ui);
+      }else if(i >= 6 && pointsInCategories[i] != -1){
+        changePointsLowerHalf(i, pointsInCategories[i], playerNr, ui);
+      }
+    }
+  }
+
+  /**
    * ändert die Punkte eines Spielers in der oberen Hälfte
    * @param value der Wert um den die Punkte erhöht werden
    * @param playerNr die Spieler Nummer, wichtig damit das richtige Label geändert werden kann
@@ -87,6 +105,10 @@ public class kniffel_player {
 
   public int getPoints(){
     return points;
+  }
+
+  public void setPoints(int points){
+    this.points = points;
   }
 
   public String getName(){

@@ -193,43 +193,43 @@ public class kniffel_ui extends JFrame implements ActionListener {
      * @param categorie die Kategorie des Dropdown Menus
      * @return gibt die möglichen Punkte zu der Kategorie zurück
      */
-    private String[] dropDownOptions(String categorie){
+    public String[] dropDownOptions(String categorie){
       ArrayList<String> options = new ArrayList<>();
       options.add(null);
       
       switch (categorie) {
         case "1er":
-          for(int i = 1; i <= 6; i++){
+          for(int i = 1; i < 6; i++){
             options.add(String.valueOf(i));
           }
           break;
 
         case "2er":
-          for(int i = 1; i <= 6; i++){
+          for(int i = 1; i < 6; i++){
             options.add(String.valueOf(i * 2));
           }
           break;
 
         case "3er":
-          for(int i = 1; i <= 6; i++){
+          for(int i = 1; i < 6; i++){
             options.add(String.valueOf(i * 3));
           }
           break;
 
         case "4er":
-          for(int i = 1; i <= 6; i++){
+          for(int i = 1; i < 6; i++){
             options.add(String.valueOf(i * 4));
           }
           break;
 
         case "5er":
-          for(int i = 1; i <= 6; i++){
+          for(int i = 1; i < 6; i++){
             options.add(String.valueOf(i * 5));
           }
           break;
 
         case "6er":
-          for(int i = 1; i <= 6; i++){
+          for(int i = 1; i < 6; i++){
             options.add(String.valueOf(i * 6));
           }
           break;
@@ -565,8 +565,12 @@ public class kniffel_ui extends JFrame implements ActionListener {
       currentPlayerLabel.setText("Spieler: " + player[currentPlayerIndex].getName());
     }
 
+    public kniffel_player[] getPlayer(){
+      return player;
+    }
+
     public static void main(String[] args) {
-        int numberOfPlayers = 4;
+        //int numberOfPlayers = 4;
         //new kniffel_ui(numberOfPlayers);
     }
 }
